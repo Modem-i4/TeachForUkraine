@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from "@inertiajs/vue3";
 
 const showingNavigationDropdown = ref(false);
+const { props } = usePage();
+const user = props.auth.user;
 </script>
 
 <template>
@@ -37,8 +39,26 @@ const showingNavigationDropdown = ref(false);
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    Календар
                                 </NavLink>
+                                <template v-if="user.role === 'student'">
+                                    <NavLink href="#">
+                                        Мій персонаж
+                                    </NavLink>
+                                </template>
+                                <template v-else-if="user.role === 'editor' || user.role === 'admin'">
+                                    <NavLink href="#">
+                                        Каталог завдань
+                                    </NavLink>
+                                    <NavLink href="#">
+                                        Статистика
+                                    </NavLink>
+                                </template>
+                                <template v-if="user.role === 'admin'">
+                                    <NavLink href="#">
+                                        Керування користувачами
+                                    </NavLink>
+                                </template>
                             </div>
                         </div>
 
