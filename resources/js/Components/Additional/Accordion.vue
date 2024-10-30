@@ -13,7 +13,7 @@
             :style="{ maxHeight: isActive ? contentHeight + 'px' : '0' }"
             ref="content"
         >
-            <slot>Accordion Content</slot>
+            <slot :updHeight="updHeight">Accordion Content</slot>
         </div>
     </div>
 </template>
@@ -21,7 +21,6 @@
 <script setup>
 import { ref, onMounted, defineProps, watch } from 'vue';
 
-// Оголошення props для modelValue
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -37,25 +36,27 @@ const props = defineProps({
     },
 });
 
-// Локальна змінна для контролю isActive
 const isActive = ref(props.modelValue);
 const contentHeight = ref(0);
 const content = ref(null);
 
-// Метод для перемикання стану
 const toggle = () => {
     isActive.value = !isActive.value;
 };
 
-// Спостерігаємо за зміною modelValue, щоб оновлювати isActive
-watch(() => props.modelValue, (newVal) => {
-    isActive.value = newVal;
-});
+watch(
+    () => props.modelValue,
+    (newVal) => {
+        isActive.value = newVal;
+    },
+);
 
-// Обчислюємо висоту контенту при монтуванні
-onMounted(() => {
+const updHeight = () => {
     contentHeight.value = content.value.scrollHeight;
-});
+};
+defineExpose({ updHeight });
+
+onMounted(updHeight);
 </script>
 
 <style>

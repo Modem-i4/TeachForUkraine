@@ -45,9 +45,10 @@ Route::get('/auth/google/callback', function () {
             'email' => $user->getEmail(),
             'google_id' => $user->getId(),
             'password' => bcrypt('password'), // Фіктивний пароль
+            'provider' => 'google',
         ]);
         Auth::login($newUser);
-        return redirect('register?r=1');
+        return redirect('register/student');
     }
 })->name('google.callback');
 

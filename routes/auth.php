@@ -9,10 +9,12 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\ProfileCompleted;
 use Illuminate\Support\Facades\Route;
 
-Route::get('register', [RegisteredUserController::class, 'create'])
-    ->name('register');
+Route::get('register/{step?}', [RegisteredUserController::class, 'create'])
+    ->middleware([ProfileCompleted::class])->name('register');
 
 Route::post('register', [RegisteredUserController::class, 'store']);
 
@@ -37,10 +39,15 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::patch('register/student', [RegisteredUserController::class, 'updateStudent'])
-        ->name('registerStudent');
-    Route::patch('register/character', [RegisteredUserController::class, 'updateCharacter'])
-        ->name('registerCharacter');
+    Route::patch('register/student', [RegisteredUserController::class, 'registerStudent'])
+        ->name('student.register');
+    Route::patch('register/character', [RegisteredUserController::class, 'registerCharacter'])
+        ->name('character.register');
+
+    Route::patch('profile/student', [ProfileController::class, 'updateStudent'])
+        ->name('student.update');
+    Route::patch('profile/character', [ProfileController::class, 'updateCharacter'])
+        ->name('character.update');
 
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');

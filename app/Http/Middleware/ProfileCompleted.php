@@ -17,17 +17,21 @@ class ProfileCompleted
     public function handle($request, Closure $next)
     {
         $user = Auth::user();
-
+        $redirect = null;
+        if (!$user) {
+            $redirect = '/register';
+        }
         if ($user) {
             if (empty($user->city)) {
-                return redirect('/register?r=1');
+                $redirect = '/register/student';
             }
 
-            if (empty($user->charName)) {
-                return redirect('/register?r=2');
+            else if (empty($user->charName)) {
+                $redirect = '/register/character';
             }
         }
-
+        if($redirect && $redirect !== $request->getRequestUri())
+            return redirect($redirect);
         return $next($request);
     }
 }

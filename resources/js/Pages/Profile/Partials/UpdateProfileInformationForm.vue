@@ -26,12 +26,10 @@ const form = useForm({
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Profile Information
+                Основна інформація
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
-            </p>
+            <p class="mt-1 text-sm text-gray-600">Твої ім'я та email</p>
         </header>
 
         <form
@@ -39,7 +37,7 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Ім'я та прізвище" />
 
                 <TextInput
                     id="name"
@@ -91,7 +89,9 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing"
+                    >Зберегти</PrimaryButton
+                >
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -103,7 +103,7 @@ const form = useForm({
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Saved.
+                        Збережено!
                     </p>
                 </Transition>
             </div>

@@ -1,55 +1,39 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import BasicRegister from '@/Components/Additional/RegisterSteps/BasicRegister.vue';
-import StudentRegister from '@/Components/Additional/RegisterSteps/StudentRegister.vue';
+import BasicRegister from '@/Pages/Auth/Partials/BasicRegister.vue';
+import StudentRegister from '@/Pages/Auth/Partials/StudentRegister.vue';
 import { ref, defineProps, watch } from 'vue';
 import Accordion from '@/Components/Additional/Accordion.vue';
-import CharacterRegister from '@/Components/Additional/RegisterSteps/CharacterRegister.vue';
+import CharacterRegister from '@/Pages/Auth/Partials/CharacterRegister.vue';
 
 const props = defineProps({
-    r: {
-        type: Number,
-        default: 0,
+    step: {
+        type: String,
+        default: 'basic',
     },
     name: {
         type: String,
         default: '',
     },
 });
-
-const regStep = ref(props.r);
-
-function getAccordions(val) {
-    return {
-        basic: val === 0,
-        student: val === 1,
-        character: val === 2,
-    };
-}
-
-let accordions = ref(getAccordions(regStep.value));
-
-watch(regStep, (newVal) => {
-    accordions.value = getAccordions(newVal);
-});
-
-function setRegStep(val) {
-    regStep.value = val;
-}
 </script>
 
 <template>
     <GuestLayout>
         <Head title="Register" />
-        <Accordion v-model="accordions.basic">
-            <BasicRegister @setRegStep="setRegStep" />
+        <Accordion :model-value="step === 'basic'" #default="{ updHeight }">
+            <BasicRegister @setRegStep="setRegStep" @updHeight="updHeight" />
         </Accordion>
-        <Accordion v-model="accordions.student">
-            <StudentRegister @setRegStep="setRegStep" :name="name" />
+        <Accordion :model-value="step === 'student'" #default="{ updHeight }">
+            <StudentRegister
+                @setRegStep="setRegStep"
+                :name="name"
+                @updHeight="updHeight"
+            />
         </Accordion>
-        <Accordion v-model="accordions.character">
-            <CharacterRegister />
+        <Accordion :model-value="step === 'character'"  #default="{ updHeight }">
+            <CharacterRegister @updHeight="updHeight" />
         </Accordion>
     </GuestLayout>
 </template>

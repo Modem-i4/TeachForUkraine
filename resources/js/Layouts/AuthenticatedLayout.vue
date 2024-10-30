@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
 const { props } = usePage();
@@ -15,9 +15,7 @@ const user = props.auth.user;
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
-            <nav
-                class="border-b border-gray-100 bg-white"
-            >
+            <nav class="border-b border-gray-100 bg-white">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
@@ -39,20 +37,21 @@ const user = props.auth.user;
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Календар
+                                    Календарик
                                 </NavLink>
                                 <template v-if="user.role === 'student'">
-                                    <NavLink href="#">
-                                        Мій персонаж
-                                    </NavLink>
+                                    <NavLink href="#"> Мій персонаж </NavLink>
                                 </template>
-                                <template v-else-if="user.role === 'editor' || user.role === 'admin'">
+                                <template
+                                    v-else-if="
+                                        user.role === 'editor' ||
+                                        user.role === 'admin'
+                                    "
+                                >
                                     <NavLink href="#">
                                         Каталог завдань
                                     </NavLink>
-                                    <NavLink href="#">
-                                        Статистика
-                                    </NavLink>
+                                    <NavLink href="#"> Статистика </NavLink>
                                 </template>
                                 <template v-if="user.role === 'admin'">
                                     <NavLink href="#">
@@ -94,14 +93,14 @@ const user = props.auth.user;
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
-                                            Profile
+                                            Мій профіль
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            Вийти
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
@@ -169,13 +168,9 @@ const user = props.auth.user;
                     </div>
 
                     <!-- Responsive Settings Options -->
-                    <div
-                        class="border-t border-gray-200 pb-1 pt-4"
-                    >
+                    <div class="border-t border-gray-200 pb-1 pt-4">
                         <div class="px-4">
-                            <div
-                                class="text-base font-medium text-gray-800"
-                            >
+                            <div class="text-base font-medium text-gray-800">
                                 {{ $page.props.auth.user.name }}
                             </div>
                             <div class="text-sm font-medium text-gray-500">
@@ -200,10 +195,7 @@ const user = props.auth.user;
             </nav>
 
             <!-- Page Heading -->
-            <header
-                class="bg-white shadow"
-                v-if="$slots.header"
-            >
+            <header class="bg-white shadow" v-if="$slots.header">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>

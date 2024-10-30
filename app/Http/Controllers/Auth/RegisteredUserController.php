@@ -5,25 +5,22 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      */
-    public function create(Request $request): Response
+    public function create(Request $request, $step = 'basic'): \Inertia\Response
     {
-        $r = $request->query('r');
-        $user = Auth::user();
-        return Inertia::render('Auth/Register', ['r' => (int)$r, 'name' => $user->name]);
+        $userName = Auth::user()->name ?? '';
+        return Inertia::render('Auth/Register', ['step' => $step, 'name' => $userName]);
     }
 
     /**
@@ -46,32 +43,37 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        return redirect('/register?r=1');
+        return redirect('/register/student');
     }
-    public function updateStudent(Request $request): Response
+
+    public function registerStudent(Request $request) :  RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        $validatedData = $request->validate([
+            'name' => 'required|string|min:5|max:255',
             'grade' => 'required|integer|min:1|max:11',
-            'oblast' => 'required|string|in:' . implode(',',\App\Constants\Oblasts::LIST),
-            'city' => 'required|string|max:255',
+            'oblast' => 'required|string|in:' . implode(',', \App\Constants\Oblasts::LIST),
+            'city' => 'required|string|min:3|max:255',
         ]);
-
-        $user = Auth::user();
-        $user->fill($request->only(['name', 'grade', 'oblast', 'city']));
-        $user->save();
-        return Inertia::render('Auth/Register', ['r' => 2]);
+        Auth::user()->fill($validatedData)->save();
+        return redirect('/register/character');
     }
 
-    public function updateCharacter(Request $request): \Symfony\Component\HttpFoundation\Response
+    public function registerCharacter(Request $request): \Symfony\Component\HttpFoundation\Response
     {
-        $request->validate([
+        $response = $this->updateCharacter($request);
+        if ($response->getStatusCode() === 202) {
+            return Inertia::location(route('dashboard'));
+        }
+        return response()->json(['error' => 'Failed to update character'], 400);
+    }
+    public function updateCharacter(Request $request) : \Illuminate\Http\Response
+    {
+        $validatedData = $request->validate([
             'charName' => 'required|string|max:255'
         ]);
-
         $user = Auth::user();
-        $user->fill($request->only(['charName']));
+        $user->fill($validatedData);
         $user->save();
-        return Inertia::location(route('dashboard'));
+        return response('Character updated successfully', 202);
     }
 }

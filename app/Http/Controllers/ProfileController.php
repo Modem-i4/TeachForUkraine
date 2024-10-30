@@ -27,7 +27,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): Response
     {
         $request->user()->fill($request->validated());
 
@@ -36,8 +36,19 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+        return Inertia::render('Profile/Edit');
+    }
 
-        return Redirect::route('profile.edit');
+
+    public function updateStudent(Request $request): RedirectResponse
+    {
+        $validatedData = $request->validate([
+            'grade' => 'required|integer|min:1|max:11',
+            'oblast' => 'required|string|in:' . implode(',', \App\Constants\Oblasts::LIST),
+            'city' => 'required|string|min:3|max:255',
+        ]);
+        Auth::user()->fill($validatedData)->save();
+        return to_route('profile.edit');
     }
 
     /**
